@@ -39,12 +39,12 @@ public class PlayerMovement : MonoBehaviour
         }
 
         Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private void Update()
     {
         HandleMovement();
-        HandleLook();
         HandleJump();
         ApplyGravity();
     }
@@ -65,15 +65,7 @@ public class PlayerMovement : MonoBehaviour
         _controller.Move(move * _moveSpeed * Time.deltaTime);
     }
 
-    private void HandleLook()
-    {
-        Vector2 look = _lookAction.ReadValue<Vector2>() * _rotationSpeed * Time.deltaTime;
-        transform.Rotate(Vector3.up * look.x);
-
-        _verticalRotation -= look.y;
-        _verticalRotation = Mathf.Clamp(_verticalRotation, -90f, 90f);
-        _povComponent.m_VerticalAxis.Value = _verticalRotation;
-    }
+    
 
     private void HandleJump()
     {
