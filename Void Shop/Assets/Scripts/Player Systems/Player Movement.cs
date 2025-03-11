@@ -10,7 +10,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _gravity = -9.81f;
     [SerializeField] private float _rotationSpeed = 100f;
     [SerializeField] private CinemachineVirtualCamera _virtualCamera;
-    [SerializeField] private Camera mainCamera; 
+    [SerializeField] private Camera mainCamera;
+    [SerializeField] private LayerMask _groundLayer; // Слой для проверки земли
 
     private CharacterController _controller;
     private PlayerInput _playerInput;
@@ -47,6 +48,7 @@ public class PlayerMovement : MonoBehaviour
         HandleMovement();
         HandleJump();
         ApplyGravity();
+        RotatePlayerToCameraDirection();
     }
 
     private void HandleMovement()
@@ -65,11 +67,9 @@ public class PlayerMovement : MonoBehaviour
         _controller.Move(move * _moveSpeed * Time.deltaTime);
     }
 
-    
-
     private void HandleJump()
     {
-        if (_jumpAction.triggered && _controller.isGrounded)
+        if (_jumpAction.triggered && IsGrounded())
         {
             _velocity.y = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
         }
@@ -77,12 +77,35 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyGravity()
     {
-        if (_controller.isGrounded && _velocity.y < 0)
+        if (IsGrounded() && _velocity.y < 0)
         {
             _velocity.y = -2f;
         }
 
         _velocity.y += _gravity * Time.deltaTime;
         _controller.Move(_velocity * Time.deltaTime);
+    }
+
+    private void RotatePlayerToCameraDirection()
+    {
+        Vector3 cameraDirection = mainCamera.transform.forward;
+        cameraDirection.y = 0; 
+        if (cameraDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(cameraDirection);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
+        }
+    }
+
+    private bool IsGrounded()
+    {
+        float rayLength = 2f; 
+        Vector3 rayOrigin = transform.position + Vector3.up * 0.1f;
+        Debug.DrawRay(rayOrigin, Vector3.down, Color.red);
+        if (Physics.Raycast(rayOrigin, Vector3.down, rayLength, _groundLayer))
+        {
+            return true;
+        }
+        return false;
     }
 }
