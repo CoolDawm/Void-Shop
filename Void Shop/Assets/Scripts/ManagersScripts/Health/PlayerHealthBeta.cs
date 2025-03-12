@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerHealth : Health
+public class PlayerHealthBeta : Health
 {
     private Regeneration regeneration;
 

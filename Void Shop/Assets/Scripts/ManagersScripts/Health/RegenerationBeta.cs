@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Regeneration : MonoBehaviour
+public class RegenerationBeta : MonoBehaviour
 {
     [SerializeField] private int regenerationAmount;
     [SerializeField] private float regenerationInterval;

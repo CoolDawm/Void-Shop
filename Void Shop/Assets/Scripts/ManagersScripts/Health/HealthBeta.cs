@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class Health : MonoBehaviour
+public class HealthBeta : MonoBehaviour
 {
     [SerializeField] private int maxHP;
     private int currentHP;
