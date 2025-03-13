@@ -1,5 +1,4 @@
 using UnityEngine;
-using static UnityEditor.Timeline.Actions.MenuPriority;
 
 public class Inventory : MonoBehaviour
 {
