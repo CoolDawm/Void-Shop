@@ -59,12 +59,12 @@ public class Inventory : MonoBehaviour
         if (activeSlotIndex != -1 && _slots[activeSlotIndex] != null)
         {
             if (dropPoint.Find("HandItem"))
-            {
-                Destroy(dropPoint.Find("HandItem").gameObject);
+            {              
+                Rigidbody rb = dropPoint.Find("HandItem").GetComponent<Rigidbody>();
+                rb.useGravity = true;
+                rb.isKinematic = false;
+                rb.transform.parent = null;
             }
-
-            Vector3 spawnPosition = GetRandomPositionAroundPlayer();
-            Instantiate(_slots[activeSlotIndex].prefab, spawnPosition, Quaternion.identity);
 
             currentWeight -= _slots[activeSlotIndex].weight;
             _slots[activeSlotIndex] = null;
@@ -125,10 +125,16 @@ public class Inventory : MonoBehaviour
             GameObject handItem = Instantiate(_slots[activeSlotIndex].prefab, dropPoint.position, dropPoint.rotation);
             handItem.name = "HandItem";
             handItem.transform.parent = dropPoint;
-            handItem.GetComponent<Rigidbody>().useGravity = false;
+            Rigidbody rb=handItem.GetComponent<Rigidbody>();           
+            rb.useGravity = false;
+            rb.isKinematic = true;
+
         }
     }
-
+    public Item[] GetItemsList()
+    {
+        return _slots;
+    }
     private void UpdateWeight()
     {
        
