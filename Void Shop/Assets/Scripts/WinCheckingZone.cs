@@ -13,7 +13,7 @@ public class WinCheckingZone : MonoBehaviour
         if (other.tag == "Player")
         {
            
-            Item[] items = other.GetComponent<Inventory>().GetItemsList();
+            Item[] items = other.GetComponent<PlayerInventory>().GetItemsList();
             if (_shoppingList.CheckInventoryWithList(items)) SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }

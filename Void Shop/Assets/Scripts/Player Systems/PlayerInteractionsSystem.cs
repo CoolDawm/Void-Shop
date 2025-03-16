@@ -6,7 +6,7 @@ public class PlayerInteractionsSystem : MonoBehaviour
     public float pickUpDistance = 2f;
     public LayerMask itemLayer;
 
-    private Inventory _inventory;
+    private PlayerInventory _inventory;
     private PlayerInput _playerInput;
     private InputAction _switchSlotAction;
     private Camera _playerCamera; 
@@ -15,7 +15,7 @@ public class PlayerInteractionsSystem : MonoBehaviour
     {
         _playerInput = GetComponent<PlayerInput>();
         _switchSlotAction = _playerInput.actions["SwitchSlot"];
-        _inventory = GetComponent<Inventory>();
+        _inventory = GetComponent<PlayerInventory>();
         _playerCamera = Camera.main;
     }
 
