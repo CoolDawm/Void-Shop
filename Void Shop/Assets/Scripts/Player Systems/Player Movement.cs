@@ -22,7 +22,7 @@ public class PlayerMovement : MonoBehaviour
     private CinemachinePOV _povComponent;
     private Vector3 _velocity;
     private float _verticalRotation;
-
+    private bool _isInStasis=false;
     private void Awake()
     {
         _controller = GetComponent<CharacterController>();
@@ -45,6 +45,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        if (_isInStasis) return;
         HandleMovement();
         HandleJump();
         ApplyGravity();
@@ -107,5 +108,15 @@ public class PlayerMovement : MonoBehaviour
             return true;
         }
         return false;
+    }
+    public void Stasis(float duration)
+    {
+        _isInStasis = true;
+        Invoke("UnStasis", duration);
+    }
+
+    private void UnStasis()
+    {
+        _isInStasis = false;
     }
 }
