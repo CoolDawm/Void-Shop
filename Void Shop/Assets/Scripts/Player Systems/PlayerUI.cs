@@ -17,6 +17,7 @@ public class PlayerUI : MonoBehaviour
         }
 
         inventory.OnInventoryUpdated += UpdateInventoryUI;
+        inventory.OnInventoryUpdated += UpdateWeight;
         inventory.OnActiveItemChanged += UpdateActiveItem;
 
         UpdateInventoryUI();
