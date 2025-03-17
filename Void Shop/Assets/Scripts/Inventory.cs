@@ -51,8 +51,11 @@ public class Inventory : MonoBehaviour
             {
                 _slots[selectedSlotIndex] = item;
                 currentWeight += item.weight;
+                Debug.Log("OnInventoryUpdated called");
                 OnInventoryUpdated?.Invoke();
+                Debug.Log("Item added: " + item.itemName);
                 OnActiveItemChanged?.Invoke(selectedSlotIndex);
+                UpdateActiveItem();
                 return true;
             }
             else
@@ -63,8 +66,11 @@ public class Inventory : MonoBehaviour
                     {
                         _slots[i] = item;
                         currentWeight += item.weight;
+                        Debug.Log("OnInventoryUpdated called");
                         OnInventoryUpdated?.Invoke();
+                        Debug.Log("Item added: " + item.itemName);
                         OnActiveItemChanged?.Invoke(i);
+                        UpdateActiveItem();
                         return true;
                     }
                 }
@@ -79,8 +85,11 @@ public class Inventory : MonoBehaviour
                 {
                     _slots[i] = item;
                     currentWeight += item.weight;
+                    Debug.Log("OnInventoryUpdated called");
                     OnInventoryUpdated?.Invoke();
+                    Debug.Log("Item added: " + item.itemName);
                     OnActiveItemChanged?.Invoke(i);
+                    UpdateActiveItem();
                     return true;
                 }
             }
@@ -103,8 +112,10 @@ public class Inventory : MonoBehaviour
 
             currentWeight -= _slots[index].weight;
             _slots[index] = null;
+            Debug.Log("OnInventoryUpdated called");
             OnInventoryUpdated?.Invoke();
             OnActiveItemChanged?.Invoke(-1);
+            UpdateActiveItem();
         }
     }
 
@@ -122,8 +133,10 @@ public class Inventory : MonoBehaviour
 
             currentWeight -= _slots[selectedSlotIndex].weight;
             _slots[selectedSlotIndex] = null;
+            Debug.Log("OnInventoryUpdated called");
             OnInventoryUpdated?.Invoke();
             OnActiveItemChanged?.Invoke(-1);
+            UpdateActiveItem();
         }
     }
 
@@ -134,7 +147,9 @@ public class Inventory : MonoBehaviour
             if (_slots[slotIndex] == null)
             {
                 _slots[slotIndex] = item;
+                Debug.Log("OnInventoryUpdated called");
                 OnInventoryUpdated?.Invoke();
+                UpdateActiveItem();
             }
             else
             {
@@ -165,8 +180,10 @@ public class Inventory : MonoBehaviour
         }
 
         currentWeight = 0;
+        Debug.Log("OnInventoryUpdated called");
         OnInventoryUpdated?.Invoke();
         OnActiveItemChanged?.Invoke(-1);
+        UpdateActiveItem();
     }
 
     private Vector3 GetRandomPositionAroundPlayer()
@@ -183,11 +200,30 @@ public class Inventory : MonoBehaviour
         {
             selectedSlotIndex = index;
             OnActiveItemChanged?.Invoke(index);
+            UpdateActiveItem();
         }
     }
 
     public Item[] GetItemsList()
     {
         return _slots;
+    }
+
+    private void UpdateActiveItem()
+    {
+        if (dropPoint.Find("HandItem"))
+        {
+            Destroy(dropPoint.Find("HandItem").gameObject);
+        }
+
+        if (selectedSlotIndex != -1 && _slots[selectedSlotIndex] != null && dropPoint != null)
+        {
+            GameObject handItem = Instantiate(_slots[selectedSlotIndex].prefab, dropPoint.position, dropPoint.rotation);
+            handItem.name = "HandItem";
+            handItem.transform.parent = dropPoint;
+            Rigidbody rb = handItem.GetComponent<Rigidbody>();
+            rb.useGravity = false;
+            rb.isKinematic = true;
+        }
     }
 }

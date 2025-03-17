@@ -66,11 +66,14 @@ public class PlayerUI : MonoBehaviour
 
     public void UpdateInventoryUI()
     {
+        Debug.Log("UpdateInventoryUI called");
         Item[] slots = inventory.GetItemsList();
         if (slots != null)
         {
+            Debug.Log("Slots count: " + slots.Length);
             for (int i = 0; i < slotUI.Length; i++)
             {
+                Debug.Log("Slot " + i + ": " + (slots[i] != null ? slots[i].itemName : "null"));
                 if (i < slots.Length && slots[i] != null)
                 {
                     slotUI[i].SetItem(slots[i]);
