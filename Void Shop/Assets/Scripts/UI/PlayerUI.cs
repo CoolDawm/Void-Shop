@@ -5,7 +5,7 @@ using TMPro;
 public class PlayerUI : MonoBehaviour
 {
     public TextMeshProUGUI weightText;
-    public InventorySlot[] slotUI;
+    public InventorySlotUI[] slotUI;
     public Inventory inventory;
 
     private void Start()
@@ -27,26 +27,22 @@ public class PlayerUI : MonoBehaviour
 
     void Update()
     {
-        switch (Input.inputString)
-        {
-            case "1":
-                inventory.SetActiveSlot(0);
-                break;
-            case "2":
-                inventory.SetActiveSlot(1);
-                break;
-            case "3":
-                inventory.SetActiveSlot(2);
-                break;
-            case "4":
-                inventory.SetActiveSlot(3);
-                break;
-            case "5":
-                inventory.SetActiveSlot(4);
-                break;
-        }
+        HandleInput();
+        HandleScrollWheel();
+    }
 
-        float scrollWheel = Input.GetAxis("Mouse ScrollWheel");
+    private void HandleInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1)) inventory.SetActiveSlot(0);
+        if (Input.GetKeyDown(KeyCode.Alpha2)) inventory.SetActiveSlot(1);
+        if (Input.GetKeyDown(KeyCode.Alpha3)) inventory.SetActiveSlot(2);
+        if (Input.GetKeyDown(KeyCode.Alpha4)) inventory.SetActiveSlot(3);
+        if (Input.GetKeyDown(KeyCode.Alpha5)) inventory.SetActiveSlot(4);
+    }
+
+    private void HandleScrollWheel()
+    {
+        float scrollWheel = Input.mouseScrollDelta.y;
         if (scrollWheel != 0)
         {
             if (scrollWheel < 0)
@@ -62,28 +58,23 @@ public class PlayerUI : MonoBehaviour
 
     public void UpdateWeight()
     {
-        weightText.text = inventory.CurrentWeight.ToString("F0") + " / " + inventory.maxWeight.ToString("F0") + "kg";
+        weightText.text = inventory.CurrentWeight.ToString("F0") + " / " + inventory.maxWeight.ToString("F0") + " kg";
     }
 
     public void UpdateInventoryUI()
     {
-        Debug.Log("UpdateInventoryUI called");
         Item[] slots = inventory.GetItemsList();
         if (slots != null)
         {
-            Debug.Log("Slots count: " + slots.Length);
             for (int i = 0; i < slotUI.Length; i++)
             {
-                Debug.Log("Slot " + i + ": " + (slots[i] != null ? slots[i].itemName : "null"));
                 if (i < slots.Length && slots[i] != null)
                 {
                     slotUI[i].SetItem(slots[i]);
-                    slotUI[i].gameObject.SetActive(true);
                 }
                 else
                 {
                     slotUI[i].SetItem(null);
-                    slotUI[i].gameObject.SetActive(true);
                 }
             }
         }
