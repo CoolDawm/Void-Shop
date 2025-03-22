@@ -180,6 +180,11 @@ public class Inventory : MonoBehaviour
         return spawnPosition;
     }
 
+    public void SwitchSlot(int slotIndex)
+    {
+        SetActiveSlot(slotIndex);
+    }
+
     public void SetActiveSlot(int slotIndex)
     {
         selectedSlotIndex = slotIndex;

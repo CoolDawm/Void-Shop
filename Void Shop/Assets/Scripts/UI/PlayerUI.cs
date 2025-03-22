@@ -25,37 +25,6 @@ public class PlayerUI : MonoBehaviour
         UpdateActiveItem(inventory.SelectedSlotIndex);
     }
 
-    void Update()
-    {
-        HandleInput();
-        HandleScrollWheel();
-    }
-
-    private void HandleInput()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha1)) inventory.SetActiveSlot(0);
-        if (Input.GetKeyDown(KeyCode.Alpha2)) inventory.SetActiveSlot(1);
-        if (Input.GetKeyDown(KeyCode.Alpha3)) inventory.SetActiveSlot(2);
-        if (Input.GetKeyDown(KeyCode.Alpha4)) inventory.SetActiveSlot(3);
-        if (Input.GetKeyDown(KeyCode.Alpha5)) inventory.SetActiveSlot(4);
-    }
-
-    private void HandleScrollWheel()
-    {
-        float scrollWheel = Input.mouseScrollDelta.y;
-        if (scrollWheel != 0)
-        {
-            if (scrollWheel < 0)
-            {
-                inventory.SetActiveSlot((inventory.SelectedSlotIndex - 1 + inventory.slotCount) % inventory.slotCount);
-            }
-            else
-            {
-                inventory.SetActiveSlot((inventory.SelectedSlotIndex + 1) % inventory.slotCount);
-            }
-        }
-    }
-
     public void UpdateWeight()
     {
         weightText.text = inventory.CurrentWeight.ToString("F0") + " / " + inventory.maxWeight.ToString("F0") + " kg";

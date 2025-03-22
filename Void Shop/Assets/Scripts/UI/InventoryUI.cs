@@ -49,7 +49,7 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
-    private void UpdateActiveItem(int index)
+    public void UpdateActiveItem(int index)
     {
         for (int i = 0; i < slots.Length; i++)
         {

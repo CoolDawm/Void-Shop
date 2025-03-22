@@ -7,9 +7,11 @@ public class PlayerInteractionsSystem : MonoBehaviour
     public LayerMask itemLayer;
 
     private Inventory _inventory;
+    private InventoryUI _inventoryUI;
     private PlayerInput _playerInput;
     private InputAction _switchSlotAction;
     private Camera _playerCamera; 
+
 
     private void Awake()
     {
@@ -49,11 +51,49 @@ public class PlayerInteractionsSystem : MonoBehaviour
 
     private void OnSwitchSlot(InputAction.CallbackContext context)
     {
-       
-        int slotIndex = int.Parse(context.control.name) - 1;
-        if (slotIndex >= 0 && slotIndex < 5)
+        int slotIndex;
+
+        if (context.control.name.StartsWith("1"))
         {
-            _inventory.SetActiveSlot(slotIndex);
+            slotIndex = 0;
+        }
+        else if (context.control.name.StartsWith("2"))
+        {
+            slotIndex = 1;
+        }
+        else if (context.control.name.StartsWith("3"))
+        {
+            slotIndex = 2;
+        }
+        else if (context.control.name.StartsWith("4"))
+        {
+            slotIndex = 3;
+        }
+        else if (context.control.name.StartsWith("5"))
+        {
+            slotIndex = 4;
+        }
+        else if (context.control.name == "mouse scroll wheel")
+        {
+            float scrollValue = context.ReadValue<Vector2>().y;
+            if (scrollValue < 0)
+            {
+                slotIndex = (_inventory.SelectedSlotIndex - 1 + _inventory.slotCount) % _inventory.slotCount;
+            }
+            else
+            {
+                slotIndex = (_inventory.SelectedSlotIndex + 1) % _inventory.slotCount;
+            }
+        }
+        else
+        {
+            return;
+        }
+
+        if (slotIndex >= 0 && slotIndex < _inventory.slotCount)
+        {
+            _inventory.SwitchSlot(slotIndex);
+            _inventoryUI.UpdateActiveItem(slotIndex);
         }
     }
 
