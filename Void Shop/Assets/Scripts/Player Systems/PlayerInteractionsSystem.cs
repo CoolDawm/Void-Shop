@@ -7,7 +7,6 @@ public class PlayerInteractionsSystem : MonoBehaviour
     public LayerMask itemLayer;
 
     private Inventory _inventory;
-    private InventoryUI _inventoryUI;
     private PlayerInput _playerInput;
     private InputAction _switchSlotAction;
     private Camera _playerCamera; 
@@ -93,7 +92,6 @@ public class PlayerInteractionsSystem : MonoBehaviour
         if (slotIndex >= 0 && slotIndex < _inventory.slotCount)
         {
             _inventory.SwitchSlot(slotIndex);
-            _inventoryUI.UpdateActiveItem(slotIndex);
         }
     }
 

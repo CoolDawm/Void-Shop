@@ -12,8 +12,7 @@ public class PlayerUI : MonoBehaviour
     {
         if (slotUI == null || slotUI.Length != inventory.slotCount)
         {
-            Debug.LogError("Слоты не назначены или их количество не соответствует slotCount!");
-            return;
+            slotUI = GetComponentsInChildren<InventorySlotUI>();
         }
 
         inventory.OnInventoryUpdated += UpdateInventoryUI;
