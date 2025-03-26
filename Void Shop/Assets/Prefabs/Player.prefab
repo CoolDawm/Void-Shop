@@ -185,9 +185,9 @@ GameObject:
   - component: {fileID: 525157758780035451}
   - component: {fileID: 5951372150803356176}
   - component: {fileID: 3759329036220647968}
+  - component: {fileID: 1683235995413642203}
+  - component: {fileID: 2072979804827284910}
   - component: {fileID: 6587910707814153541}
-  - component: {fileID: 400534578682812872}
-  - component: {fileID: 9104422039683646976}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -248,10 +248,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7213655cfe41989458bcb93e97979e59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pickUpDistance: 2
-  itemLayer:
-    serializedVersion: 2
-    m_Bits: 8
 --- !u!114 &525157758780035451
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -340,11 +336,42 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 39f085cc-57f8-4007-af67-e927dd2d6499
     m_ActionName: 'Keyboard/SwitchSlot[/Keyboard/1,/Keyboard/2,/Keyboard/3,/Keyboard/4,/Keyboard/5]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 3146f7d0-e697-4493-804a-adee37824af6
+    m_ActionName: 'Keyboard/HotKeys[/Keyboard/e,/Keyboard/q,/Keyboard/r]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Keyboard
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &1683235995413642203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8146755407089226838}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb1c3c993f179f54cb2dd333fb1dfab8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dropPoint: {fileID: 0}
+--- !u!114 &2072979804827284910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8146755407089226838}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 368894047552b8641884d999becda3bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weightText: {fileID: 0}
+  slotUI: []
 --- !u!114 &6587910707814153541
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -364,38 +391,3 @@ MonoBehaviour:
   healthBar: {fileID: 0}
   backgroundBar: {fileID: 0}
   healthText: {fileID: 0}
---- !u!114 &400534578682812872
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8146755407089226838}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96266d5810997b84bafaae11467c551c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weightText: {fileID: 0}
-  slotUI:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  inventory: {fileID: 9104422039683646976}
---- !u!114 &9104422039683646976
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8146755407089226838}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2c88772130b3b6408353222fb0f7cb5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  slotCount: 5
-  maxWeight: 10
-  dropPoint: {fileID: 0}
