@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemPickup : MonoBehaviour
+public class ItemPickup : MonoBehaviour, IInteractable
 {
-    public Item item;
+    [SerializeField]
+    private Item itemSO;
+    public Item itm => itemSO;
 }
