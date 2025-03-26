@@ -1,30 +1,31 @@
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
-public class PlayerInventory : MonoBehaviour
+public class Inventory : MonoBehaviour
 {
-    public Image healthBar;
-    public TextMeshProUGUI healthText;
-    public TextMeshProUGUI weightText;
-    public InventorySlot[] slotUI;
     public int slotCount = 5;
-    private int selectedSlotIndex = 0;
     public int maxWeight = 10;
+    public Transform dropPoint;
 
-    public Item flashlight; //to private in future or delete entirly
-    public int currentWeight = 0; //to private in future
-    public Transform dropPoint;//to private in future
-    private Item[] _slots = new Item[5];
+    private Item[] _slots;
+    private int currentWeight = 0;
+    private int selectedSlotIndex = 0;
+
+    public int CurrentWeight => currentWeight;
+    public int SelectedSlotIndex => selectedSlotIndex;
+
+    public delegate void InventoryUpdated();
+    public event InventoryUpdated OnInventoryUpdated;
+
+    public delegate void ActiveItemChanged(int index);
+    public event ActiveItemChanged OnActiveItemChanged;
+
+    private void Awake()
+    {
+        _slots = new Item[slotCount];
+    }
 
     void Start()
     {
-        if (slotUI == null || slotUI.Length != slotCount)
-        {
-            Debug.LogError("Слоты не назначены или их количество не соответствует slotCount!");
-            return;
-        }
-
         if (dropPoint == null)
         {
             dropPoint = GameObject.FindGameObjectWithTag("Hand").transform;
@@ -37,108 +38,6 @@ public class PlayerInventory : MonoBehaviour
 
         SetActiveSlot(selectedSlotIndex);
         UpdateInventoryUI();
-        UpdateWeight();
-    }
-
-    void Update()
-    {
-        switch (Input.inputString)
-        {
-            case "1":
-                SelectSlot(0);
-                break;
-            case "2":
-                SelectSlot(1);
-                break;
-            case "3":
-                SelectSlot(2);
-                break;
-            case "4":
-                SelectSlot(3);
-                break;
-            case "5":
-                SelectSlot(4);
-                break;
-        }
-
-        float scrollWheel = Input.GetAxis("Mouse ScrollWheel");
-        if (scrollWheel != 0)
-        {
-            if (scrollWheel < 0) 
-            {
-                selectedSlotIndex = (selectedSlotIndex - 1 + slotCount) % slotCount;
-            }
-            else
-            {
-                selectedSlotIndex = (selectedSlotIndex + 1) % slotCount;
-            }
-            SelectSlot(selectedSlotIndex);
-        }
-    }
-
-    public void SelectSlot(int slotIndex)
-    {
-        if (slotIndex >= 0 && slotIndex < slotCount)
-        {
-            selectedSlotIndex = slotIndex;
-            Debug.Log("Selected slot index: " + selectedSlotIndex);
-            SetActiveSlot(selectedSlotIndex);
-            SetActiveActiveItem(selectedSlotIndex);
-        }
-    }
-
-    public void UpdateHealth(float currentHealth, float maxHealth)
-    {
-        healthBar.fillAmount = currentHealth / maxHealth;
-        healthText.text = currentHealth.ToString("F0") + "/" + maxHealth.ToString("F0");
-    }
-
-    public void UpdateWeight(float currentWeight, float maxWeight)
-    {
-        weightText.text = currentWeight.ToString("F0") + "/" + maxWeight.ToString("F0");
-    }
-
-    public void UpdateInventoryUI()
-    {
-        if (_slots != null)
-        {
-            for (int i = 0; i < slotUI.Length; i++)
-            {
-                if (i < _slots.Length && _slots[i] != null)
-                {
-                    slotUI[i].SetItem(_slots[i]);
-                    slotUI[i].gameObject.SetActive(true);
-                }
-                else
-                {
-                    slotUI[i].SetItem(null);
-                    slotUI[i].gameObject.SetActive(true);
-                }
-            }
-        }
-    }
-
-    public void SetActiveSlot(int slotIndex)
-    {
-        Debug.Log("SetActiveSlot called with slotIndex: " + slotIndex);
-        if (slotUI == null)
-        {
-            Debug.LogWarning("slotUI is null");
-            return;
-        }
-
-        for (int i = 0; i < slotUI.Length; i++)
-        {
-            if (slotUI[i] != null)
-            {
-                Debug.Log("Setting selection for slot: " + i + ", active: " + (i == slotIndex));
-                slotUI[i].SetSelectionActive(i == slotIndex);
-            }
-            else
-            {
-                Debug.LogWarning("slotUI[" + i + "] is null");
-            }
-        }
     }
 
     public bool AddItem(Item item)
@@ -155,7 +54,6 @@ public class PlayerInventory : MonoBehaviour
             {
                 _slots[selectedSlotIndex] = item;
                 currentWeight += item.weight;
-                UpdateWeight();
                 SetActiveActiveItem(selectedSlotIndex);
                 UpdateInventoryUI();
                 return true;
@@ -168,7 +66,6 @@ public class PlayerInventory : MonoBehaviour
                     {
                         _slots[i] = item;
                         currentWeight += item.weight;
-                        UpdateWeight();
                         SetActiveActiveItem(i);
                         UpdateInventoryUI();
                         return true;
@@ -185,7 +82,6 @@ public class PlayerInventory : MonoBehaviour
                 {
                     _slots[i] = item;
                     currentWeight += item.weight;
-                    UpdateWeight();
                     SetActiveActiveItem(i);
                     UpdateInventoryUI();
                     return true;
@@ -210,7 +106,6 @@ public class PlayerInventory : MonoBehaviour
 
             currentWeight -= _slots[index].weight;
             _slots[index] = null;
-            UpdateWeight();
             UpdateInventoryUI();
         }
     }
@@ -229,12 +124,10 @@ public class PlayerInventory : MonoBehaviour
 
             currentWeight -= _slots[selectedSlotIndex].weight;
             _slots[selectedSlotIndex] = null;
-            UpdateWeight();
             UpdateInventoryUI();
-
-            
         }
     }
+
     public void PlaceItemInSlot(Item item, int slotIndex)
     {
         if (slotIndex >= 0 && slotIndex < _slots.Length)
@@ -287,6 +180,18 @@ public class PlayerInventory : MonoBehaviour
         return spawnPosition;
     }
 
+    public void SwitchSlot(int slotIndex)
+    {
+        SetActiveSlot(slotIndex);
+    }
+
+    public void SetActiveSlot(int slotIndex)
+    {
+        selectedSlotIndex = slotIndex;
+        OnActiveItemChanged?.Invoke(selectedSlotIndex);
+        SetActiveActiveItem(selectedSlotIndex);
+    }
+
     private void SetActiveActiveItem(int index)
     {
         if (dropPoint.Find("HandItem"))
@@ -302,7 +207,6 @@ public class PlayerInventory : MonoBehaviour
             Rigidbody rb = handItem.GetComponent<Rigidbody>();
             rb.useGravity = false;
             rb.isKinematic = true;
-
         }
     }
 
@@ -311,8 +215,14 @@ public class PlayerInventory : MonoBehaviour
         return _slots;
     }
 
-    private void UpdateWeight() 
+    private void UpdateWeight()
     {
-        weightText.text = currentWeight.ToString("F0") + " / " + maxWeight.ToString("F0") + "kg";
+        OnInventoryUpdated?.Invoke();
+        Debug.Log("Current weight: " + currentWeight + " / Max weight: " + maxWeight);
+    }
+
+    private void UpdateInventoryUI()
+    {
+        OnInventoryUpdated?.Invoke();
     }
 }

@@ -1,12 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InventorySlot : MonoBehaviour
+public class InventorySlotUI : MonoBehaviour
 {
     public Image itemImage;
     public GameObject selectionFrame;
     private Vector3 originalScale;
     public Vector3 selectedScale = Vector3.one * 1.1f;
+    public int slotIndex;
 
     void Start()
     {
@@ -17,16 +18,8 @@ public class InventorySlot : MonoBehaviour
     {
         if (itemImage != null)
         {
-            if (item != null)
-            {
-                itemImage.sprite = item.icon;
-                itemImage.enabled = true;
-            }
-            else
-            {
-                itemImage.sprite = null;
-                itemImage.enabled = false;
-            }
+            itemImage.sprite = item != null ? item.icon : null;
+            itemImage.enabled = item != null;
         }
     }
 
@@ -34,13 +27,8 @@ public class InventorySlot : MonoBehaviour
     {
         if (selectionFrame != null)
         {
-            Debug.Log("SetSelectionActive: " + isActive);
             selectionFrame.SetActive(isActive);
             selectionFrame.transform.localScale = isActive ? selectedScale : originalScale;
-        }
-        else
-        {
-            Debug.LogWarning("selectionFrame is null");
         }
     }
 }
