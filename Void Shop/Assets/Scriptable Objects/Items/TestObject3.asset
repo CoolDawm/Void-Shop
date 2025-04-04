@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6fd792a1206df7b499a3a8e3e4a34293, type: 3}
-  m_Name: TestObject2
+  m_Name: TestObject3
   m_EditorClassIdentifier: 
-  itemName: Object2
-  icon: {fileID: 21300000, guid: 90bc42f16aac87b45ab36cbb51d911b4, type: 3}
-  weight: 5
-  prefab: {fileID: 9031688020915969088, guid: 240354792ed03fe4bbb917d54006a777, type: 3}
+  itemName: Object3
+  icon: {fileID: 21300000, guid: 698bd12664cd7fb448f445841900a242, type: 3}
+  weight: 1
+  prefab: {fileID: 9031688020915969088, guid: 2689f38d85f759f4d83be07b54433458, type: 3}

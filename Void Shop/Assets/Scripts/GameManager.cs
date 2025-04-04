@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     private InventoryView _inventoryView;
     private InventoryController _inventoryController;
     private PlayerUI _playerUI;
+    private ShoppingList _shoppingList;
     void Awake()
     {
         _playerCamera = Camera.main;
@@ -30,6 +31,7 @@ public class GameManager : MonoBehaviour
         InputEvents.OnSwitchSlot += HandleSwitchSlot;
         InputEvents.OnHotkey += HandleHotkey;
         _playerUI.inventoryModel = _inventoryModel;
+        _shoppingList = FindAnyObjectByType<ShoppingList>();
     }
 
     void OnDestroy()
@@ -75,6 +77,7 @@ public class GameManager : MonoBehaviour
                 Item item = interactable.itm;
                 if (_inventoryController.AddItem(item))
                 {
+                    _shoppingList.UpdateUIList(_inventoryController.GetAllItems());
                     Destroy(hit.collider.gameObject);
                 }
             }

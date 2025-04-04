@@ -100,7 +100,7 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsGrounded()
     {
-        float rayLength = 2f; 
+        float rayLength = 1.6f; 
         Vector3 rayOrigin = transform.position + Vector3.up * 0.1f;
         Debug.DrawRay(rayOrigin, Vector3.down, Color.red);
         if (Physics.Raycast(rayOrigin, Vector3.down, rayLength, _groundLayer))
