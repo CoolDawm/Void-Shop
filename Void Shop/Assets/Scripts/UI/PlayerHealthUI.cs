@@ -12,7 +12,6 @@ public class PlayerHealthUI : MonoBehaviour
 
     public Image healthBar;
     public Image backgroundBar;
-    public TMP_Text healthText;
 
     private int currentHP;
     private Coroutine regenerationCoroutine;
@@ -95,7 +94,6 @@ public class PlayerHealthUI : MonoBehaviour
     private void UpdateHealthUI()
     {
         healthBar.fillAmount = (float)currentHP / maxHP;
-        healthText.text = currentHP.ToString();
     }
 
     private IEnumerator RegenerationCoroutine()

@@ -9,8 +9,9 @@ public class InventoryModel
     public int SelectedSlotIndex { get; private set; }
 
     private Item[] _slots;
+    private int _weightLevel = 0;
 
-    public event Action OnInventoryUpdated;
+    public event Action<int> OnInventoryUpdated;
     public event Action<Item> OnActiveItemChanged;
 
     public InventoryModel(int slotCount, int maxWeight)
@@ -19,6 +20,25 @@ public class InventoryModel
         MaxWeight = maxWeight;
         _slots = new Item[slotCount];
         SelectedSlotIndex = 0;
+    }
+
+    // Добавьте это свойство для доступа к уровню веса извне
+    public int WeightLevel => _weightLevel;
+
+    private void UpdateWeightLevel()
+    {
+        if (MaxWeight == 0) return;
+
+        float fillPercentage = (float)CurrentWeight / MaxWeight;
+
+        if (fillPercentage <= 0.25f)
+            _weightLevel = 0;
+        else if (fillPercentage <= 0.5f)
+            _weightLevel = 1;
+        else if (fillPercentage <= 0.75f)
+            _weightLevel = 2;
+        else
+            _weightLevel = 3;
     }
 
     public Item[] GetItems()
@@ -42,7 +62,8 @@ public class InventoryModel
         {
             _slots[SelectedSlotIndex] = item;
             CurrentWeight += item.weight;
-            OnInventoryUpdated?.Invoke();
+            UpdateWeightLevel(); // Обновляем уровень веса
+            OnInventoryUpdated?.Invoke(_weightLevel);
             OnActiveItemChanged?.Invoke(item);
             return true;
         }
@@ -53,7 +74,8 @@ public class InventoryModel
             {
                 _slots[i] = item;
                 CurrentWeight += item.weight;
-                OnInventoryUpdated?.Invoke();
+                UpdateWeightLevel(); // Обновляем уровень веса
+                OnInventoryUpdated?.Invoke(_weightLevel);
                 OnActiveItemChanged?.Invoke(item);
                 return true;
             }
@@ -68,7 +90,8 @@ public class InventoryModel
         {
             CurrentWeight -= _slots[index].weight;
             _slots[index] = null;
-            OnInventoryUpdated?.Invoke();
+            UpdateWeightLevel(); // Обновляем уровень веса
+            OnInventoryUpdated?.Invoke(_weightLevel);
             if (index == SelectedSlotIndex)
             {
                 OnActiveItemChanged?.Invoke(null);
@@ -84,7 +107,8 @@ public class InventoryModel
         }
         CurrentWeight = 0;
         SelectedSlotIndex = -1;
-        OnInventoryUpdated?.Invoke();
+        UpdateWeightLevel(); // Обновляем уровень веса
+        OnInventoryUpdated?.Invoke(_weightLevel);
         OnActiveItemChanged?.Invoke(null);
     }
 
@@ -96,6 +120,7 @@ public class InventoryModel
             OnActiveItemChanged?.Invoke(_slots[slotIndex]);
         }
     }
+
     public Item[] GetItemsList()
     {
         return _slots;

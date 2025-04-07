@@ -1,15 +1,21 @@
 using UnityEngine;
 using TMPro;
+using NUnit.Framework;
+using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class PlayerUI : MonoBehaviour
 {
     [Header("UI References")]
-    public TextMeshProUGUI weightText;
+    [SerializeField]
+    private Image _weightImage;
     public InventorySlotUI[] slotUI;
     
     [Header("Model References")]
-    public InventoryModel inventoryModel; 
-
+    public InventoryModel inventoryModel;
+    [Header("Weight")]
+    [SerializeField]
+    private List<Sprite> weightSprites = new List<Sprite>();
     private void Start()
     {
         if (slotUI == null || slotUI.Length != inventoryModel.SlotCount)
@@ -18,27 +24,11 @@ public class PlayerUI : MonoBehaviour
         }
 
         inventoryModel.OnInventoryUpdated += UpdateInventoryUI;
-        inventoryModel.OnInventoryUpdated += UpdateWeight;
         inventoryModel.OnActiveItemChanged += UpdateActiveItem;
-
-        UpdateInventoryUI();
-        UpdateWeight();
+        
         UpdateActiveItem(inventoryModel.GetItem(inventoryModel.SelectedSlotIndex));
     }
-
-    private void OnDestroy()
-    {
-        inventoryModel.OnInventoryUpdated -= UpdateInventoryUI;
-        inventoryModel.OnInventoryUpdated -= UpdateWeight;
-        inventoryModel.OnActiveItemChanged -= UpdateActiveItem;
-    }
-
-    public void UpdateWeight()
-    {
-        weightText.text = $"{inventoryModel.CurrentWeight} / {inventoryModel.MaxWeight} kg";
-    }
-
-    public void UpdateInventoryUI()
+    private void UpdateInventoryUI(int weightLevel)
     {
         Item[] slots = inventoryModel.GetItemsList();
         if (slots != null)
@@ -55,8 +45,13 @@ public class PlayerUI : MonoBehaviour
                 }
             }
         }
+        _weightImage.sprite = weightSprites[weightLevel];
     }
-
+    private void OnDestroy()
+    {
+        inventoryModel.OnInventoryUpdated -= UpdateInventoryUI;
+        inventoryModel.OnActiveItemChanged -= UpdateActiveItem;
+    }
     public void UpdateActiveItem(Item activeItem)
     {
         int activeIndex = inventoryModel.SelectedSlotIndex;
