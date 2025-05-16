@@ -1,17 +1,35 @@
-using UnityEngine;
-using UnityEngine.InputSystem;
 using Cinemachine;
+using UnityEngine.InputSystem;
+using UnityEngine;
 
 [RequireComponent(typeof(CharacterController), typeof(PlayerInput))]
 public class PlayerMovement : MonoBehaviour
 {
+    [Header("Movement Settings")]
     [SerializeField] private float _moveSpeed = 5f;
     [SerializeField] private float _jumpHeight = 3f;
     [SerializeField] private float _gravity = -9.81f;
     [SerializeField] private float _rotationSpeed = 100f;
+
+    [Header("Camera Settings")]
     [SerializeField] private CinemachineVirtualCamera _virtualCamera;
     [SerializeField] private Camera mainCamera;
-    [SerializeField] private LayerMask _groundLayer; // Слой для проверки земли
+
+    [Header("Ground Check Settings")]
+    [SerializeField] 
+    private LayerMask _groundLayer;
+    [SerializeField] 
+    private float _groundCheckRadius = 0.3f;
+    [SerializeField]
+    private float _groundCheckDistance = 0.2f;
+    [SerializeField] 
+    private Vector3 _groundCheckOffset = new Vector3(0, -0.1f, 0);
+    [SerializeField]
+    private int _groundCheckRays = 4; 
+    [Header("Weight Settings")]
+    [SerializeField] 
+    private float[] speedModifiers = new float[] { 1f, 0.9f, 0.75f, 0.6f, 0.5f }; 
+    private float _baseMoveSpeed;
 
     private CharacterController _controller;
     private PlayerInput _playerInput;
@@ -21,17 +39,20 @@ public class PlayerMovement : MonoBehaviour
 
     private CinemachinePOV _povComponent;
     private Vector3 _velocity;
-    private float _verticalRotation;
-    private bool _isInStasis=false;
+    private bool _isInStasis = false;
+
     private void Awake()
     {
         _controller = GetComponent<CharacterController>();
         _playerInput = GetComponent<PlayerInput>();
-
+        _baseMoveSpeed = _moveSpeed;
         _moveAction = _playerInput.actions["Move"];
         _jumpAction = _playerInput.actions["Jump"];
         _lookAction = _playerInput.actions["Look"];
-        _virtualCamera = FindAnyObjectByType<CinemachineVirtualCamera>();
+
+        if (_virtualCamera == null)
+            _virtualCamera = FindAnyObjectByType<CinemachineVirtualCamera>();
+
         _povComponent = _virtualCamera.GetCinemachineComponent<CinemachinePOV>();
 
         if (mainCamera == null)
@@ -42,7 +63,14 @@ public class PlayerMovement : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
-
+    private void Start()
+    {
+        GameManager.Instance.GetInventoryModel().OnInventoryUpdated += UpdateSpeedByWeight;
+    }
+    private void OnDestroy()
+    {
+        GameManager.Instance.GetInventoryModel().OnInventoryUpdated -= UpdateSpeedByWeight;
+    }
     private void Update()
     {
         if (_isInStasis) return;
@@ -90,7 +118,7 @@ public class PlayerMovement : MonoBehaviour
     private void RotatePlayerToCameraDirection()
     {
         Vector3 cameraDirection = mainCamera.transform.forward;
-        cameraDirection.y = 0; 
+        cameraDirection.y = 0;
         if (cameraDirection != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(cameraDirection);
@@ -100,22 +128,54 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsGrounded()
     {
-        float rayLength = 1.6f; 
-        Vector3 rayOrigin = transform.position + Vector3.up * 0.1f;
-        Debug.DrawRay(rayOrigin, Vector3.down, Color.red);
-        if (Physics.Raycast(rayOrigin, Vector3.down, rayLength, _groundLayer))
+        Vector3 center = transform.position + _groundCheckOffset;
+        if (Physics.Raycast(center, Vector3.down, _groundCheckDistance + _groundCheckRadius, _groundLayer))
         {
+            Debug.DrawRay(center, Vector3.down * (_groundCheckDistance + _groundCheckRadius), Color.green);
             return true;
         }
+
+        for (int i = 0; i < _groundCheckRays; i++)
+        {
+            float angle = i * (360f / _groundCheckRays);
+            Vector3 dir = Quaternion.Euler(0, angle, 0) * Vector3.forward * _groundCheckRadius;
+            Vector3 rayStart = center + dir;
+
+            if (Physics.Raycast(rayStart, Vector3.down, _groundCheckDistance, _groundLayer))
+            {
+                Debug.DrawRay(rayStart, Vector3.down * _groundCheckDistance, Color.green);
+                return true;
+            }
+            else
+            {
+                Debug.DrawRay(rayStart, Vector3.down * _groundCheckDistance, Color.red);
+            }
+        }
+
         return false;
     }
+    private void UpdateSpeedByWeight(int weightLevel)
+    {
+        if (weightLevel >= 0 && weightLevel < speedModifiers.Length)
+        {
+            _moveSpeed = _baseMoveSpeed * speedModifiers[weightLevel];
+        }
+    }
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Vector3 center = transform.position + _groundCheckOffset;
+        Gizmos.DrawWireSphere(center, _groundCheckRadius);
+        Gizmos.DrawLine(center, center + Vector3.down * _groundCheckDistance);
+    }
+
     public void Stasis(float duration)
     {
         _isInStasis = true;
         Invoke("UnStasis", duration);
     }
 
-    private void UnStasis()
+    public void UnStasis()
     {
         _isInStasis = false;
     }

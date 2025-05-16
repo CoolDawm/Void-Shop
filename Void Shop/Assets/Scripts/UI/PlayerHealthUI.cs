@@ -58,6 +58,8 @@ public class PlayerHealthUI : MonoBehaviour
 
     private void Die()
     {
+        FindAnyObjectByType<GameUIManager>().ShowLoseMenu();
+        GameManager.Instance.EndGame();
         Debug.Log("Player died!");
         // логика для смерти игрока
     }

@@ -1,4 +1,3 @@
-using UnityEditor.Search;
 using UnityEngine;
 
 public class InventoryView : MonoBehaviour
@@ -30,7 +29,7 @@ public class InventoryView : MonoBehaviour
             _currentHandItem = Instantiate(item.prefab, dropPoint.position, dropPoint.rotation);
             _currentHandItem.name = "HandItem";
             _currentHandItem.transform.parent = dropPoint;
-
+            _currentHandItem.layer = 6;
             var rb = _currentHandItem.GetComponent<Rigidbody>();
             if (rb != null)
             {

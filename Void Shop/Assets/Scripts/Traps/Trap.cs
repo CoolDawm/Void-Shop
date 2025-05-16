@@ -21,7 +21,7 @@ public  class Trap : MonoBehaviour
         if (other.CompareTag(aim.ToString()))
         {
             ApplyEffect(other.gameObject);
-            _animator.SetTrigger("IsTriggered");
+            _animator?.SetTrigger("IsTriggered");
             _isTriggerd = true;
         }
     }
