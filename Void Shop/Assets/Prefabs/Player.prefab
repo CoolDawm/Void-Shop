@@ -269,6 +269,17 @@ MonoBehaviour:
   _groundLayer:
     serializedVersion: 2
     m_Bits: 1
+  _groundCheckRadius: 0.3
+  _groundCheckDistance: 0.2
+  _groundCheckOffset: {x: 0, y: -0.1, z: 0}
+  _groundCheckRays: 4
+  _footstepInterval: 0.5
+  speedModifiers:
+  - 1
+  - 0.9
+  - 0.85
+  - 0.8
+  - 0.75
 --- !u!143 &5951372150803356176
 CharacterController:
   m_ObjectHideFlags: 0
@@ -370,8 +381,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 368894047552b8641884d999becda3bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weightText: {fileID: 0}
+  _weightImage: {fileID: 0}
   slotUI: []
+  weightSprites: []
 --- !u!114 &6587910707814153541
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -390,4 +402,3 @@ MonoBehaviour:
   regenerationInterruptTime: 3
   healthBar: {fileID: 0}
   backgroundBar: {fileID: 0}
-  healthText: {fileID: 0}

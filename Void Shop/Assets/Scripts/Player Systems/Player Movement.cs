@@ -1,6 +1,6 @@
-using Cinemachine;
-using UnityEngine.InputSystem;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using Cinemachine;
 
 [RequireComponent(typeof(CharacterController), typeof(PlayerInput))]
 public class PlayerMovement : MonoBehaviour
@@ -16,19 +16,18 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Camera mainCamera;
 
     [Header("Ground Check Settings")]
-    [SerializeField] 
-    private LayerMask _groundLayer;
-    [SerializeField] 
-    private float _groundCheckRadius = 0.3f;
-    [SerializeField]
-    private float _groundCheckDistance = 0.2f;
-    [SerializeField] 
-    private Vector3 _groundCheckOffset = new Vector3(0, -0.1f, 0);
-    [SerializeField]
-    private int _groundCheckRays = 4; 
+    [SerializeField] private LayerMask _groundLayer;
+    [SerializeField] private float _groundCheckRadius = 0.3f;
+    [SerializeField] private float _groundCheckDistance = 0.2f;
+    [SerializeField] private Vector3 _groundCheckOffset = new Vector3(0, -0.1f, 0);
+    [SerializeField] private int _groundCheckRays = 4;
+
+    [Header("Footstep Settings")]
+    [SerializeField] private float _footstepInterval = 0.5f;
+    private float _footstepTimer;
+
     [Header("Weight Settings")]
-    [SerializeField] 
-    private float[] speedModifiers = new float[] { 1f, 0.9f, 0.75f, 0.6f, 0.5f }; 
+    [SerializeField] private float[] speedModifiers = new float[] { 1f, 0.9f, 0.75f, 0.6f, 0.5f };
     private float _baseMoveSpeed;
 
     private CharacterController _controller;
@@ -36,7 +35,6 @@ public class PlayerMovement : MonoBehaviour
     private InputAction _moveAction;
     private InputAction _jumpAction;
     private InputAction _lookAction;
-
     private CinemachinePOV _povComponent;
     private Vector3 _velocity;
     private bool _isInStasis = false;
@@ -51,26 +49,27 @@ public class PlayerMovement : MonoBehaviour
         _lookAction = _playerInput.actions["Look"];
 
         if (_virtualCamera == null)
-            _virtualCamera = FindAnyObjectByType<CinemachineVirtualCamera>();
+            _virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
 
         _povComponent = _virtualCamera.GetCinemachineComponent<CinemachinePOV>();
 
         if (mainCamera == null)
-        {
             mainCamera = Camera.main;
-        }
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
+
     private void Start()
     {
         GameManager.Instance.GetInventoryModel().OnInventoryUpdated += UpdateSpeedByWeight;
     }
+
     private void OnDestroy()
     {
         GameManager.Instance.GetInventoryModel().OnInventoryUpdated -= UpdateSpeedByWeight;
     }
+
     private void Update()
     {
         if (_isInStasis) return;
@@ -78,12 +77,42 @@ public class PlayerMovement : MonoBehaviour
         HandleJump();
         ApplyGravity();
         RotatePlayerToCameraDirection();
+        HandleFootsteps();
+    }
+
+    private void HandleFootsteps()
+    {
+        bool isMoving = IsGrounded() && IsMoving();
+
+        if (isMoving)
+        {
+            // Если таймер достиг нуля - сразу играем звук
+            if (_footstepTimer <= 0f)
+            {
+                GameAudioEvents.OnFootstepRequested?.Invoke();
+                _footstepTimer = _footstepInterval;
+            }
+            else
+            {
+                _footstepTimer -= Time.deltaTime;
+            }
+        }
+        else
+        {
+            _footstepTimer = 0f; // Сбрасываем таймер при остановке
+            GameAudioEvents.OnFootstepStopped?.Invoke();
+        }
+    }
+
+    private bool IsMoving()
+    {
+        Vector2 input = _moveAction.ReadValue<Vector2>();
+        return input.magnitude > 0.1f;
     }
 
     private void HandleMovement()
     {
         Vector2 input = _moveAction.ReadValue<Vector2>();
-
         Vector3 cameraForward = mainCamera.transform.forward;
         Vector3 cameraRight = mainCamera.transform.right;
 
@@ -99,17 +128,13 @@ public class PlayerMovement : MonoBehaviour
     private void HandleJump()
     {
         if (_jumpAction.triggered && IsGrounded())
-        {
             _velocity.y = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
-        }
     }
 
     private void ApplyGravity()
     {
         if (IsGrounded() && _velocity.y < 0)
-        {
             _velocity.y = -2f;
-        }
 
         _velocity.y += _gravity * Time.deltaTime;
         _controller.Move(_velocity * Time.deltaTime);
@@ -146,21 +171,17 @@ public class PlayerMovement : MonoBehaviour
                 Debug.DrawRay(rayStart, Vector3.down * _groundCheckDistance, Color.green);
                 return true;
             }
-            else
-            {
-                Debug.DrawRay(rayStart, Vector3.down * _groundCheckDistance, Color.red);
-            }
+            Debug.DrawRay(rayStart, Vector3.down * _groundCheckDistance, Color.red);
         }
-
         return false;
     }
+
     private void UpdateSpeedByWeight(int weightLevel)
     {
         if (weightLevel >= 0 && weightLevel < speedModifiers.Length)
-        {
             _moveSpeed = _baseMoveSpeed * speedModifiers[weightLevel];
-        }
     }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
@@ -172,7 +193,7 @@ public class PlayerMovement : MonoBehaviour
     public void Stasis(float duration)
     {
         _isInStasis = true;
-        Invoke("UnStasis", duration);
+        Invoke(nameof(UnStasis), duration);
     }
 
     public void UnStasis()

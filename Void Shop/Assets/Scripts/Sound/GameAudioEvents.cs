@@ -12,5 +12,7 @@ public static class GameAudioEvents
 
     public static System.Action OnBossHurtRequested;
     public static System.Action<int> OnBossAttackRequested;// for test
+    public static System.Action OnFootstepStopped; 
+
 
 }

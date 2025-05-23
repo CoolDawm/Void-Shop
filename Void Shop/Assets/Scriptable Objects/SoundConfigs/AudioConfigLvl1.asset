@@ -17,9 +17,10 @@ MonoBehaviour:
   adventureMusic: {fileID: 0}
   battleMusic: {fileID: 0}
   footsteps:
-    categoryName: 
-    clips: []
-    pitchVariation: 1
+    categoryName: Steps
+    clips:
+    - {fileID: 8300000, guid: e8397cc87fdcfbb4d9256a8900fbbaf1, type: 3}
+    pitchVariation: 0.1
     volume: 1
   meleeAttacks:
     categoryName: 

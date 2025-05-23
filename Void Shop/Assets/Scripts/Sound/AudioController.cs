@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Audio;
+
 [RequireComponent(typeof(AudioSource))]
-//make volume changes function for settings
 public class AudioController : MonoBehaviour
 {
     [Header("Mixer Groups")]
@@ -13,24 +13,27 @@ public class AudioController : MonoBehaviour
 
     private AudioSource _musicSource;
     private AudioSource _sfxSource;
+    private AudioSource _footstepSource;
 
     private void Awake()
     {
+        // Инициализация музыкального источника
         _musicSource = GetComponent<AudioSource>();
         _musicSource.outputAudioMixerGroup = _musicMixerGroup;
         _musicSource.loop = true;
 
+        // Инициализация общего SFX источника
         _sfxSource = gameObject.AddComponent<AudioSource>();
         _sfxSource.outputAudioMixerGroup = _sfxMixerGroup;
 
+        // Инициализация отдельного источника для шагов
+        GameObject footstepObj = new GameObject("FootstepSource");
+        footstepObj.transform.SetParent(transform);
+        _footstepSource = footstepObj.AddComponent<AudioSource>();
+        _footstepSource.outputAudioMixerGroup = _sfxMixerGroup;
+        _footstepSource.playOnAwake = false;
         SubscribeToEvents();
         PlayAdventureMusic();
-    }
-
-    
-    private void OnDestroy()
-    {
-        UnsubscribeFromEvents();
     }
 
     private void SubscribeToEvents()
@@ -43,9 +46,11 @@ public class AudioController : MonoBehaviour
         GameAudioEvents.OnPlayerHurtRequested += PlayPlayerHurt;
         GameAudioEvents.OnBossHurtRequested += PlayBossHurt;
         GameAudioEvents.OnBossAttackRequested += PlayBossAttack;
+        GameAudioEvents.OnFootstepStopped += StopFootstep;
+
     }
 
-    private void UnsubscribeFromEvents()
+    private void OnDestroy()
     {
         GameAudioEvents.OnAdventureMusicRequested -= PlayAdventureMusic;
         GameAudioEvents.OnBattleMusicRequested -= PlayBattleMusic;
@@ -54,6 +59,8 @@ public class AudioController : MonoBehaviour
         GameAudioEvents.OnPlayerMagicCastRequested -= PlayPlayerMagicCast;
         GameAudioEvents.OnPlayerHurtRequested -= PlayPlayerHurt;
         GameAudioEvents.OnBossHurtRequested -= PlayBossHurt;
+        GameAudioEvents.OnBossAttackRequested -= PlayBossAttack;
+        GameAudioEvents.OnFootstepStopped -= StopFootstep;
     }
 
     public void PlayAdventureMusic()
@@ -78,7 +85,25 @@ public class AudioController : MonoBehaviour
 
     public void PlayFootstep()
     {
-        PlayRandomizedSFX(_audioConfig.footsteps);
+        if (_audioConfig.footsteps.clips.Length == 0 || _footstepSource.isPlaying)
+            return;
+
+        AudioClip clip = _audioConfig.footsteps.clips[Random.Range(0, _audioConfig.footsteps.clips.Length)];
+        _footstepSource.clip = clip; // Назначаем клип
+        _footstepSource.pitch = Random.Range(
+            1f - _audioConfig.footsteps.pitchVariation / 2,
+            1f + _audioConfig.footsteps.pitchVariation / 2
+        );
+        _footstepSource.volume = _audioConfig.footsteps.volume * _audioConfig.globalSFXVolume;
+        _footstepSource.Play(); // Используем Play() вместо PlayOneShot()
+    }
+
+    public void StopFootstep()
+    {
+        if (_footstepSource.isPlaying)
+        {
+            _footstepSource.Stop();
+        }
     }
 
     public void PlayPlayerAttack()
@@ -100,18 +125,29 @@ public class AudioController : MonoBehaviour
     {
         PlayRandomizedSFX(_audioConfig.bossHits);
     }
+
     public void PlayBossAttack(int attackIndex)
     {
-        PlaySFX(_audioConfig.bossSpecialAttacks.clips[attackIndex]);// maybe kostil maybe not - for checking
+        if (_audioConfig.bossSpecialAttacks.clips == null ||
+            attackIndex < 0 ||
+            attackIndex >= _audioConfig.bossSpecialAttacks.clips.Length)
+            return;
+
+        PlaySFX(_audioConfig.bossSpecialAttacks.clips[attackIndex]);
     }
+
     private void PlayRandomizedSFX(AudioConfig.SoundCategory category)
     {
         if (category.clips == null || category.clips.Length == 0) return;
 
         AudioClip clip = category.clips[Random.Range(0, category.clips.Length)];
-        _sfxSource.pitch = Random.Range(1f - category.pitchVariation / 2, 1f + category.pitchVariation / 2);
-        _sfxSource.PlayOneShot(clip, category.volume);
+        _sfxSource.pitch = Random.Range(
+            1f - category.pitchVariation / 2,
+            1f + category.pitchVariation / 2
+        );
+        _sfxSource.PlayOneShot(clip, category.volume * _audioConfig.globalSFXVolume);
     }
+
     private void PlaySFX(AudioClip clip, float volume = 1f)
     {
         if (clip == null) return;
@@ -120,13 +156,11 @@ public class AudioController : MonoBehaviour
         AudioSource source = sfxObject.AddComponent<AudioSource>();
         source.outputAudioMixerGroup = _sfxMixerGroup;
         source.clip = clip;
-        source.volume = volume;
+        source.volume = volume * _audioConfig.globalSFXVolume;
         source.Play();
-
         Destroy(sfxObject, clip.length);
     }
 
-    // for real-time music and sfx change
     public void UpdateMusicVolume(float volume)
     {
         _audioConfig.globalMusicVolume = volume;
@@ -137,5 +171,6 @@ public class AudioController : MonoBehaviour
     {
         _audioConfig.globalSFXVolume = volume;
         _sfxSource.volume = volume;
+        _footstepSource.volume = volume;
     }
 }
