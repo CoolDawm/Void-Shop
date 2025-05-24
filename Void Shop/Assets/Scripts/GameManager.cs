@@ -24,6 +24,9 @@ public class GameManager : MonoBehaviour
     private PlayerUI _playerUI;
     private ShoppingList _shoppingList;
     public static GameManager Instance { get; private set; }
+
+    //for mouse scroll
+    private int _currentSlotIndex;
     void Awake()
     {
         _playerCamera = Camera.main;
@@ -35,6 +38,7 @@ public class GameManager : MonoBehaviour
         _playerUI = FindAnyObjectByType<PlayerUI>();
         InputEvents.OnSwitchSlot += HandleSwitchSlot;
         InputEvents.OnHotkey += HandleHotkey;
+        InputEvents.OnMouseScroll += HandleScrollSlot;
         _playerUI.inventoryModel = _inventoryModel;
         _shoppingList = FindAnyObjectByType<ShoppingList>();
 
@@ -54,15 +58,30 @@ public class GameManager : MonoBehaviour
     {
         InputEvents.OnSwitchSlot -= HandleSwitchSlot;
         InputEvents.OnHotkey -= HandleHotkey;
+        InputEvents.OnMouseScroll -= HandleScrollSlot;
     }
 
+    private void HandleScrollSlot(InputAction.CallbackContext context)
+    {
+        //read mouse scroll values
+        float mouseScrollY = context.ReadValue<float>();
+        _currentSlotIndex = (_currentSlotIndex + (int)mouseScrollY) % inventorySlotCount;
+        if (_currentSlotIndex<0 && mouseScrollY < 0)
+        {
+           _currentSlotIndex = inventorySlotCount -1;
+        }
+         _inventoryController.SetActiveSlot(_currentSlotIndex);
+      
+    }
     private void HandleSwitchSlot(InputAction.CallbackContext context)
     {
         int slotIndex = int.Parse(context.control.name) - 1;
+        _currentSlotIndex = slotIndex;
         if (slotIndex >= 0 && slotIndex < inventorySlotCount)
         {
             _inventoryController.SetActiveSlot(slotIndex);
         }
+
     }
 
     private void HandleHotkey(InputAction.CallbackContext context)
