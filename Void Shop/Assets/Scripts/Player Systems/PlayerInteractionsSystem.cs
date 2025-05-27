@@ -10,7 +10,6 @@ public class PlayerInteractionsSystem : MonoBehaviour
 
     public float _mouseScrollVal { get; private set; }
      
-
     private void Awake()
     {
         _playerInput = GetComponent<PlayerInput>();
@@ -43,12 +42,8 @@ public class PlayerInteractionsSystem : MonoBehaviour
         InputEvents.InvokeHotkey(context);
     }
 
-
     private void OnMouseScroll(InputAction.CallbackContext context)
     {
-        //_mouseScrollVal = context.ReadValue<float>();
-        //Debug.Log($"mouseVal: {_mouseScrollVal}");
-
-        InputEvents.InvokeMouseScroll(context);
+       InputEvents.InvokeMouseScroll(context);
     }
 }

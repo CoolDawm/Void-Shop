@@ -9,6 +9,7 @@ public class PlayerHealthUI : MonoBehaviour
     [SerializeField] private int regenerationAmount = 10;
     [SerializeField] private float regenerationInterval = 1f;
     [SerializeField] private float regenerationInterruptTime = 3f;
+    [SerializeField] private Image damageImg;
 
     public Image healthBar;
     public Image backgroundBar;
@@ -22,6 +23,14 @@ public class PlayerHealthUI : MonoBehaviour
         currentHP = maxHP;
         UpdateHealthUI();
         StartRegeneration();
+    }
+
+    private void DisplayHealthDamage()
+    {
+        float transparency = 1f - (currentHP/maxHP);
+        Color damageColor = Color.white;
+        damageColor.a = transparency; //ьс damageColor.a *= transparency
+        damageImg.color = damageColor;
     }
 
     public void TakeDamage(int damage)
@@ -96,6 +105,7 @@ public class PlayerHealthUI : MonoBehaviour
     private void UpdateHealthUI()
     {
         healthBar.fillAmount = (float)currentHP / maxHP;
+        DisplayHealthDamage();
     }
 
     private IEnumerator RegenerationCoroutine()

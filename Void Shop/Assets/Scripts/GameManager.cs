@@ -71,8 +71,8 @@ public class GameManager : MonoBehaviour
            _currentSlotIndex = inventorySlotCount -1;
         }
          _inventoryController.SetActiveSlot(_currentSlotIndex);
-      
     }
+
     private void HandleSwitchSlot(InputAction.CallbackContext context)
     {
         int slotIndex = int.Parse(context.control.name) - 1;
