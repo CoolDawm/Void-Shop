@@ -70,6 +70,7 @@ public class MonsterController : MonoBehaviour
     {
         switch (_currentState)
         {
+            default:
             case MonsterState.Patrolling:
                 UpdatePatrol();
                 break;

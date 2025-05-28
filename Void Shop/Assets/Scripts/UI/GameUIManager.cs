@@ -14,6 +14,7 @@ public class GameUIManager : MonoBehaviour
     {
         // Initialize all UI elements as hidden
         HideAllMenus();
+
         
     }
 

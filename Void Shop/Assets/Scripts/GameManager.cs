@@ -66,22 +66,19 @@ public class GameManager : MonoBehaviour
         //read mouse scroll values
         float mouseScrollY = context.ReadValue<float>();
         _currentSlotIndex = (_currentSlotIndex + (int)mouseScrollY) % inventorySlotCount;
-        if (_currentSlotIndex<0 && mouseScrollY < 0)
+        if (_currentSlotIndex < 0 && mouseScrollY < 0)
         {
-           _currentSlotIndex = inventorySlotCount -1;
+            _currentSlotIndex = inventorySlotCount - 1;
         }
-         _inventoryController.SetActiveSlot(_currentSlotIndex);
+        _inventoryController.SetActiveSlot(_currentSlotIndex);
     }
-
     private void HandleSwitchSlot(InputAction.CallbackContext context)
     {
         int slotIndex = int.Parse(context.control.name) - 1;
-        _currentSlotIndex = slotIndex;
         if (slotIndex >= 0 && slotIndex < inventorySlotCount)
         {
             _inventoryController.SetActiveSlot(slotIndex);
         }
-
     }
 
     private void HandleHotkey(InputAction.CallbackContext context)

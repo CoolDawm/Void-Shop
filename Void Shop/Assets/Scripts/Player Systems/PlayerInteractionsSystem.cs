@@ -8,14 +8,13 @@ public class PlayerInteractionsSystem : MonoBehaviour
     private InputAction _HotKeysAction;
     private InputAction _mouseScrollAction;
 
-    public float _mouseScrollVal { get; private set; }
-     
     private void Awake()
     {
         _playerInput = GetComponent<PlayerInput>();
         _switchSlotAction = _playerInput.actions["SwitchSlot"];
         _HotKeysAction = _playerInput.actions["HotKeys"];
         _mouseScrollAction = _playerInput.actions["MouseScrollY"];
+
     }
 
     private void OnEnable()
@@ -41,9 +40,8 @@ public class PlayerInteractionsSystem : MonoBehaviour
     {
         InputEvents.InvokeHotkey(context);
     }
-
     private void OnMouseScroll(InputAction.CallbackContext context)
     {
-       InputEvents.InvokeMouseScroll(context);
+        InputEvents.InvokeMouseScroll(context);
     }
 }

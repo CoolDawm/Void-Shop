@@ -205,7 +205,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.06, z: 0}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3404838429464858029}
@@ -260,8 +260,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7063f1bf56bf06468d414b5d70fc8e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 6.5
-  _jumpHeight: 3.5
+  _moveSpeed: 5
+  _jumpHeight: 2.5
   _gravity: -19.62
   _rotationSpeed: 100
   _virtualCamera: {fileID: 0}
@@ -269,16 +269,17 @@ MonoBehaviour:
   _groundLayer:
     serializedVersion: 2
     m_Bits: 1
-  _groundCheckRadius: 0.4
+  _groundCheckRadius: 0.3
   _groundCheckDistance: 0.2
-  _groundCheckOffset: {x: 0, y: -1.38, z: 0}
-  _groundCheckRays: 5
+  _groundCheckOffset: {x: 0, y: -0.1, z: 0}
+  _groundCheckRays: 4
+  _footstepInterval: 0.5
   speedModifiers:
   - 1
   - 0.9
+  - 0.85
+  - 0.8
   - 0.75
-  - 0.6
-  - 0.5
 --- !u!143 &5951372150803356176
 CharacterController:
   m_ObjectHideFlags: 0
@@ -350,10 +351,6 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 3146f7d0-e697-4493-804a-adee37824af6
     m_ActionName: 'Keyboard/HotKeys[/Keyboard/e,/Keyboard/q,/Keyboard/r]'
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: dbe8e84f-66c1-4011-b8d6-429ec088bf93
-    m_ActionName: 'Keyboard/MouseScrollY[/Mouse/scroll/y]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Keyboard
@@ -385,18 +382,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _weightImage: {fileID: 0}
-  slotUI:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  weightSprites:
-  - {fileID: 21300000, guid: 7cf875bffd4cd724aab03c78a2c966ea, type: 3}
-  - {fileID: 21300000, guid: 50c6efb1681ec3a4c8b86ce2df2831b3, type: 3}
-  - {fileID: 21300000, guid: 5ba8b1d4a0e95fc4eb60ffcd38a19739, type: 3}
-  - {fileID: 21300000, guid: cd076764db1a4a14cbcd24f364011bbf, type: 3}
-  - {fileID: 21300000, guid: c622e56085aabaa4888a990ad2bf8d12, type: 3}
+  slotUI: []
+  weightSprites: []
 --- !u!114 &6587910707814153541
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -410,8 +397,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHP: 100
-  regenerationAmount: 1
-  regenerationInterval: 2
+  regenerationAmount: 4
+  regenerationInterval: 1
   regenerationInterruptTime: 3
   healthBar: {fileID: 0}
   backgroundBar: {fileID: 0}
