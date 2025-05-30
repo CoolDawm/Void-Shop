@@ -93684,6 +93684,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6587910707814153541, guid: f75952f31cb4bf5488be6523f3005acb, type: 3}
+      propertyPath: damageScreen
+      value: 
+      objectReference: {fileID: 849484788}
+    - target: {fileID: 6587910707814153541, guid: f75952f31cb4bf5488be6523f3005acb, type: 3}
       propertyPath: backgroundBar
       value: 
       objectReference: {fileID: 2026388622}
