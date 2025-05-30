@@ -12,6 +12,7 @@ public class PlayerHealthUI : MonoBehaviour
 
     public Image healthBar;
     public Image backgroundBar;
+    public Image damageScreen;
 
     private int currentHP;
     private Coroutine regenerationCoroutine;
@@ -39,6 +40,14 @@ public class PlayerHealthUI : MonoBehaviour
         {
             Die();
         }
+    }
+
+    private void DisplayDamageScreen()
+    {
+        float transparency = 1f - (currentHP / maxHP);
+        Color damageColor = Color.white;
+        damageColor.a = transparency;
+        damageScreen.color = damageColor;
     }
 
     private void Regeneration(int amount)
@@ -96,6 +105,7 @@ public class PlayerHealthUI : MonoBehaviour
     private void UpdateHealthUI()
     {
         healthBar.fillAmount = (float)currentHP / maxHP;
+        DisplayDamageScreen();
     }
 
     private IEnumerator RegenerationCoroutine()
