@@ -3,8 +3,10 @@ using System.Collections;
 
 public class DamageDealer : MonoBehaviour
 {
-    public int damageAmount = 10; 
-    public float damageInterval = 1f; 
+    [SerializeField] private int damageAmount = 10;
+    [SerializeField] private float damageInterval = 1f;
+
+
 
     private bool isPlayerOnSpikes = false; 
     private PlayerHealthUI playerHealth; 
@@ -35,8 +37,8 @@ public class DamageDealer : MonoBehaviour
     {
         while (isPlayerOnSpikes && playerHealth != null)
         {
-            playerHealth.TakeDamage(damageAmount);
             yield return new WaitForSeconds(damageInterval);
+            playerHealth.TakeDamage(damageAmount);
         }
     }
 }
