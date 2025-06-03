@@ -24,7 +24,6 @@ public class GameManager : MonoBehaviour
     private PlayerUI _playerUI;
     private ShoppingList _shoppingList;
     public static GameManager Instance { get; private set; }
-
     private int _currentSlotIndex;
 
     void Awake()

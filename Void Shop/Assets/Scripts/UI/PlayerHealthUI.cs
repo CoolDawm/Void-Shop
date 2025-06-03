@@ -41,6 +41,13 @@ public class PlayerHealthUI : MonoBehaviour
             Die();
         }
     }
+    private void DisplayDamageScreen()
+    {
+        float transparency = 1f - (currentHP / maxHP);
+        Color damageColor = Color.white;
+        damageColor.a = transparency;
+        damageScreen.color = damageColor;
+    }
 
     private void DisplayDamageScreen()
     {

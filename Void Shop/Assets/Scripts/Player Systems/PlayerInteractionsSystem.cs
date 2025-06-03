@@ -7,7 +7,6 @@ public class PlayerInteractionsSystem : MonoBehaviour
     private InputAction _switchSlotAction;
     private InputAction _HotKeysAction;
     private InputAction _mouseScrollAction;
-    public float _mouseScrollVal { get; private set; }
 
     private void Awake()
     {

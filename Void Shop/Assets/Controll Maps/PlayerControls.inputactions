@@ -53,7 +53,7 @@
                 {
                     "name": "MouseScrollY",
                     "type": "PassThrough",
-                    "id": "4ca9e6eb-4100-4db7-9eb0-ac55ab6ea516",
+                    "id": "0d456332-f14d-4146-a826-57727063438b",
                     "expectedControlType": "Axis",
                     "processors": "",
                     "interactions": "",
@@ -228,7 +228,7 @@
                 },
                 {
                     "name": "",
-                    "id": "3b595a5c-cb2e-4b53-bf8c-1333ea74de0a",
+                    "id": "e8619726-0750-4d3f-bb6b-f44e3978d0a3",
                     "path": "<Mouse>/scroll/y",
                     "interactions": "",
                     "processors": "",
