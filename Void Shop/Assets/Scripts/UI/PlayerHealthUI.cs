@@ -49,14 +49,6 @@ public class PlayerHealthUI : MonoBehaviour
         damageScreen.color = damageColor;
     }
 
-    private void DisplayDamageScreen()
-    {
-        float transparency = 1f - (currentHP / maxHP);
-        Color damageColor = Color.white;
-        damageColor.a = transparency;
-        damageScreen.color = damageColor;
-    }
-
     private void Regeneration(int amount)
     {
         if (amount <= 0) return;
